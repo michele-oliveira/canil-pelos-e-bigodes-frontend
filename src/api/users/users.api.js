@@ -1,3 +1,5 @@
+import UnauthorizedError from "../../errors/http/UnauthorizedError";
+
 export const registerUser = async (user) => {
   try {
     const response = await fetch(
@@ -29,6 +31,9 @@ export const login = async (credentials) => {
         body: JSON.stringify(credentials),
       }
     );
+    if (!response.ok && response.status === 401) {
+      throw new UnauthorizedError("Invalid credentials");
+    }
     if (!response.ok) {
       throw new Error(response.statusText);
     }
