@@ -5,18 +5,23 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { login } from "../api/users/users.api";
 import UnauthorizedError from "../errors/http/UnauthorizedError";
+import { useAuth } from "../hooks/useAuth";
+import { saveJwt } from "../utils/jwt";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       const credentials = { email, password };
-      const accessToken = await login(credentials);
-      console.log(accessToken);
+      const response = await login(credentials);
+      saveJwt(response.accessToken);
+      setUser(response.accessToken);
       navigate("/");
     } catch (error) {
       if (error instanceof UnauthorizedError) {
