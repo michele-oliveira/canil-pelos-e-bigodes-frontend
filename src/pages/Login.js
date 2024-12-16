@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
+import toast from "../components/react-stacked-toast";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { login } from "../api/users/users.api";
+import UnauthorizedError from "../errors/http/UnauthorizedError";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -17,8 +19,21 @@ function Login() {
       console.log(accessToken);
       navigate("/");
     } catch (error) {
-      console.error(error);
-      alert("E-mail ou senha incorretos");
+      if (error instanceof UnauthorizedError) {
+        toast({
+          title: "E-mail ou senha incorretos",
+          description: "Redigite suas credenciais e tente novamente",
+          type: "error",
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: "Houve um erro inesperado",
+          description: "Por favor, tente novamente",
+          type: "error",
+          duration: 3000,
+        });
+      }
     }
   };
 
