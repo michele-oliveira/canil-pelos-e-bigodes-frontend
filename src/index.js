@@ -1,18 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import reportWebVitals from "./reportWebVitals";
 import { RouterProvider } from "react-router-dom";
-import router from "./router";
-import { Toaster } from "react-stacked-toast";
+import reportWebVitals from "./reportWebVitals";
 import { AuthProvider } from "./providers/AuthProvider";
+import { AnimalsProvider } from "./providers/AnimalsProvider";
+import { Toaster } from "react-stacked-toast";
+import router from "./router";
+
+import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Toaster />
     <AuthProvider>
-      <RouterProvider router={router} />
+      <AnimalsProvider>
+        <RouterProvider router={router} />
+      </AnimalsProvider>
     </AuthProvider>
   </React.StrictMode>
 );
