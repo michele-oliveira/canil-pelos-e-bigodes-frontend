@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useAnimals } from "../hooks/useAnimals";
 import toast from "../components/react-stacked-toast";
 import Header from "../components/Header";
+import ImageDrop from "../components/ImageDrop";
 import Footer from "../components/Footer";
 import { newAnimal } from "../api/animals/animals.api";
 import { AnimalType } from "../enums/AnimalType";
 import { AnimalGender } from "../enums/AnimalGender";
+import InvalidImageFileError from "../errors/files/InvalidImageFileError";
+import InvalidFileAmountSelectedError from "../errors/files/InvalidFileAmountSelectedError";
 
 function Report() {
   const [formData, setFormData] = useState({
@@ -64,7 +67,11 @@ function Report() {
   };
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const {
+      target: { name, value, type },
+      type: eventType,
+    } = e;
+
     if (type === "radio") {
       setFormData((prevData) => ({
         ...prevData,
@@ -80,7 +87,11 @@ function Report() {
         vaccines: selectedVaccines,
       }));
     } else if (type === "file") {
-      setFormData((prevData) => ({ ...prevData, [name]: e.target.files[0] }));
+      const selectedFile = e.target.files[0];
+      setFormData((prevData) => ({ ...prevData, [name]: selectedFile }));
+    } else if (eventType === "drop") {
+      const droppedFile = e.dataTransfer.files[0];
+      setFormData((prevData) => ({ ...prevData, [name]: droppedFile }));
     } else {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
@@ -99,6 +110,33 @@ function Report() {
       type: "success",
       duration: 2000,
     });
+  };
+
+  const onSelectImageError = (error) => {
+    if (error instanceof InvalidImageFileError) {
+      toast({
+        title: "Imagem inválida",
+        description: "Por favor, envie uma imagem JPG, JPEG ou PNG",
+        type: "warning",
+        duration: 3000,
+      });
+    } else if (error instanceof InvalidFileAmountSelectedError) {
+      toast({
+        title: "Envio inválido",
+        description: "Por favor, envie apenas uma imagem",
+        type: "warning",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Erro inesperado ao atualizar dados",
+        description:
+          "Por favor, tente novamente. Se achar que se trata de uma falha, acione o suporte",
+        type: "error",
+        duration: 3000,
+      });
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -124,7 +162,7 @@ function Report() {
   return (
     <div>
       <Header />
-      <div className="max-w-4xl mx-auto p-6 bg-gray-800 text-white rounded-lg mt-10">
+      <div className="max-w-4xl mx-4 lg:mx-auto p-6 bg-gray-800 text-white rounded-lg mt-10">
         <h1
           className="text-2xl md:text-3xl font-bold mb-6 text-center"
           style={{ fontFamily: "Montserrat, serif" }}
@@ -133,9 +171,12 @@ function Report() {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-lg mb-2">Nome do Animal</label>
+            <label htmlFor="name" className="block text-lg mb-2">
+              Nome do Animal
+            </label>
             <input
               type="text"
+              id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -173,9 +214,12 @@ function Report() {
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Raça</label>
+            <label htmlFor="breed" className="block text-lg mb-2">
+              Raça
+            </label>
             <input
               type="text"
+              id="breed"
               name="breed"
               value={formData.breed}
               onChange={handleChange}
@@ -185,9 +229,12 @@ function Report() {
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Idade</label>
+            <label htmlFor="age" className="block text-lg mb-2">
+              Idade
+            </label>
             <input
               type="number"
+              id="age"
               name="age"
               value={formData.age}
               onChange={handleChange}
@@ -197,8 +244,11 @@ function Report() {
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Sexo</label>
+            <label htmlFor="gender" className="block text-lg mb-2">
+              Sexo
+            </label>
             <select
+              id="gender"
               name="gender"
               value={formData.gender}
               onChange={handleChange}
@@ -237,8 +287,11 @@ function Report() {
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Comportamento</label>
+            <label htmlFor="behavior" className="block text-lg mb-2">
+              Comportamento
+            </label>
             <textarea
+              id="behavior"
               name="behavior"
               value={formData.behavior}
               onChange={handleChange}
@@ -248,25 +301,35 @@ function Report() {
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Imagem 1</label>
-            <input
-              type="file"
+            <label htmlFor="image1" className="block text-lg mb-2">
+              Imagem 1 <span className="text-gray-400 text-sm">(Paisagem)</span>
+            </label>
+            <ImageDrop
+              id="image1"
               name="image1"
+              image={formData.image1}
               onChange={handleChange}
-              className="w-full p-3 rounded bg-gray-700 border border-gray-600"
-              required
+              onError={onSelectImageError}
+              className="aspect-video"
             />
           </div>
 
           <div>
-            <label className="block text-lg mb-2">Imagem 2</label>
-            <input
-              type="file"
-              name="image2"
-              onChange={handleChange}
-              className="w-full p-3 rounded bg-gray-700 border border-gray-600"
-              required
-            />
+            <label htmlFor="image2" className="block text-lg mb-2">
+              Imagem 2 <span className="text-gray-400 text-sm">(Retrato)</span>
+            </label>
+            <div className="flex justify-center">
+              <div className="w-full md:w-3/4">
+                <ImageDrop
+                  id="image2"
+                  name="image2"
+                  image={formData.image2}
+                  onChange={handleChange}
+                  onError={onSelectImageError}
+                  className="aspect-square"
+                />
+              </div>
+            </div>
           </div>
 
           <button
