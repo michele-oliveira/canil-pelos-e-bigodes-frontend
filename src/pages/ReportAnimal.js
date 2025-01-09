@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAnimals } from "../hooks/useAnimals";
 import toast from "../components/react-stacked-toast";
 import Header from "../components/Header";
 import ImageDrop from "../components/ImageDrop";
 import Footer from "../components/Footer";
-import { newAnimal } from "../api/animals/animals.api";
+import { getAnimal, newAnimal, updateAnimal } from "../api/animals/animals.api";
+import { getFileFromUrl } from "../utils/files";
 import { AnimalType } from "../enums/AnimalType";
 import { AnimalGender } from "../enums/AnimalGender";
 import InvalidImageFileError from "../errors/files/InvalidImageFileError";
 import InvalidFileAmountSelectedError from "../errors/files/InvalidFileAmountSelectedError";
+import NotFoundError from "../errors/http/NotFoundError";
+import UnauthorizedError from "../errors/http/UnauthorizedError";
 
 function Report() {
   const [formData, setFormData] = useState({
@@ -25,8 +28,10 @@ function Report() {
   });
   const [catVaccines, setCatVaccines] = useState();
   const [dogVaccines, setDogVaccines] = useState();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { animal_id: animalId } = useParams();
   const { vaccines, error } = useAnimals();
 
   const formatRequestBody = (data) => {
@@ -39,15 +44,18 @@ function Report() {
     };
 
     const formData = new FormData();
+    if (animalId) formData.append("id", animalId);
     formData.append("name", body.name);
     formData.append("type", body.type);
     formData.append("breed", body.breed);
     formData.append("age", body.age);
     formData.append("gender", body.gender);
-    formData.append("vaccines", body.vaccines);
     formData.append("description", body.description);
     formData.append("image_1", body.image_1);
     formData.append("image_2", body.image_2);
+    body.vaccines.forEach((vaccine) => {
+      formData.append("vaccineIds", vaccine);
+    });
 
     return formData;
   };
@@ -99,17 +107,57 @@ function Report() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const requestBody = formatRequestBody(formData);
 
-    const requestBody = formatRequestBody(formData);
+      if (requestBody.get("id")) {
+        await updateAnimal(requestBody);
 
-    await newAnimal(requestBody);
+        toast({
+          title: "Registro de animal atualizado com sucesso",
+          type: "success",
+          duration: 2000,
+        });
+        navigate("/");
+      } else {
+        await newAnimal(requestBody);
 
-    emptyForm();
-    toast({
-      title: "Animal cadastrado com sucesso",
-      type: "success",
-      duration: 2000,
-    });
+        emptyForm();
+        toast({
+          title: "Animal cadastrado com sucesso",
+          type: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        toast({
+          title: "Acesso não autorizado",
+          description:
+            "Ops... parece que você não tem permissão para fazer isso. Por favor, faça login e tente novamente",
+          type: "error",
+          duration: 3500,
+        });
+        navigate("/login");
+      } else if (error instanceof NotFoundError) {
+        toast({
+          title: "Animal não encontrado",
+          description:
+            "Ops... parece que tivemos um problema para encontrar este animal. Por favor, tente novamente ou acione o suporte",
+          type: "error",
+          duration: 3500,
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Houve um erro inesperado",
+          description:
+            "Lamentamos pelo ocorrido. Por favor, tente novamente mais tarde ou acione o suporte",
+          type: "error",
+          duration: 2500,
+        });
+      }
+    }
   };
 
   const onSelectImageError = (error) => {
@@ -158,6 +206,60 @@ function Report() {
       setDogVaccines(vaccines.filter((vaccine) => vaccine.type === "dog"));
     }
   }, [vaccines]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (animalId) {
+          setLoading(true);
+          const animal = await getAnimal(animalId);
+
+          if (animal) {
+            const image1File = await getFileFromUrl(animal.image_1);
+            const image2File = await getFileFromUrl(animal.image_2);
+            const vaccineIds = animal.vaccines
+              ? animal.vaccines.map((vaccine) => vaccine.id)
+              : [];
+
+            setFormData({
+              id: animal.id,
+              name: animal.name,
+              type: animal.type,
+              breed: animal.breed,
+              age: animal.age,
+              gender: animal.gender,
+              behavior: animal.description,
+              vaccines: vaccineIds,
+              image1: image1File,
+              image2: image2File,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        if (error instanceof NotFoundError) {
+          toast({
+            title: "Animal não encontrado",
+            description:
+              "O identificador informado não foi encontrado para nenhum animal",
+            type: "error",
+            duration: 3000,
+          });
+        } else {
+          toast({
+            title: "Erro ao carregar animal",
+            description:
+              "Houve um erro inesperado ao carregar as informações do animal",
+            type: "error",
+            duration: 3000,
+          });
+        }
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [animalId, navigate]);
 
   return (
     <div>
