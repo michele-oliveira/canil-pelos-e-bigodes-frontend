@@ -1,7 +1,7 @@
 import dog from "../assets/images/cachorros.jpg";
 import patinha from "../assets/images/patinhas.png";
 
-const Folder = () => {
+const Presentation = () => {
   return (
     <div className="relative flex flex-col mt-5 mx-4 p-6 md:flex-row items-center justify-center overflow-hidden rounded-lg bg-gray-100">
       <div 
@@ -38,7 +38,7 @@ const Folder = () => {
   );
 };
 
-export default Folder;
+export default Presentation;
 
 
 
