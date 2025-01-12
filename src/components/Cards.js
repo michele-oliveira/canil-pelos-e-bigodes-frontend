@@ -48,11 +48,11 @@ const Cards = () => {
   ];
 
   return (
-    <div className="bg-slate-100 p-4 m-4 rounded-lg">
+    <div className="flex flex-col items-center bg-slate-100 p-4 m-4 rounded-lg">
       <h1 className="text-3xl text-green-700 mb-6 pt-3 text-center font-bold">
         Conheça nossos amigos para adoção
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-[1900px]">
         {pets.map((pet, index) => (
           <div
             key={index}
