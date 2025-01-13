@@ -1,6 +1,37 @@
+import BadRequestError from "../../errors/http/BadRequestError";
 import NotFoundError from "../../errors/http/NotFoundError";
 import UnauthorizedError from "../../errors/http/UnauthorizedError";
 import { getJwt } from "../../utils/jwt";
+
+export const listAnimals = async (page, limit, animalType = null) => {
+  let url = `${process.env.REACT_APP_BACKEND_URL}/animals?page=${page}&limit=${limit}`;
+  if (animalType) {
+    url += `&animalType=${animalType}`;
+  }
+
+  try {
+    const accessToken = getJwt();
+    const response = await fetch(url, {
+      headers: accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const animals = await response.json();
+    if (!response.ok) {
+      if (response.status === 400) {
+        throw new BadRequestError("Invalid request params");
+      } else if (response.status === 404) {
+        throw new NotFoundError("User not found");
+      } else {
+        throw new Error(response.statusText);
+      }
+    }
+    return animals;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export const getAnimal = async (animalId) => {
   try {
@@ -17,7 +48,7 @@ export const getAnimal = async (animalId) => {
     const vaccines = await response.json();
     return vaccines;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
