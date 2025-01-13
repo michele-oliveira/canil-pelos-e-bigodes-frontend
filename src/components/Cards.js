@@ -33,6 +33,26 @@ const Cards = () => {
     }
   }, []);
 
+  const handleScroll = useCallback(() => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      }
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
   useEffect(() => {
     fetchAnimals(currentPage, animalFilter);
   }, [fetchAnimals, currentPage, animalFilter]);
