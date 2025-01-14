@@ -11,15 +11,23 @@ const Cards = () => {
   const [animalFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const fetchAnimals = useCallback(async (page, animalType = null) => {
+  const fetchAnimals = async (page, animalType = null) => {
     try {
-      const { animals, totalPages } = await listAnimals(
+      setLoading(true);
+
+      const { animals: animalsResponse, totalPages } = await listAnimals(
         page,
         ITEMS_PER_PAGE,
         animalType
       );
-      setAnimals(animals);
+
+      if (animals) {
+        setAnimals((previousValue) => [...previousValue, ...animalsResponse]);
+      } else {
+        setAnimals(animalsResponse);
+      }
       setTotalPages(totalPages);
     } catch (error) {
       console.error(error);
@@ -30,20 +38,22 @@ const Cards = () => {
         type: "error",
         duration: 2500,
       });
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
 
   const handleScroll = useCallback(() => {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
 
-    if (scrollTop + clientHeight >= scrollHeight) {
+    if (scrollTop + clientHeight >= scrollHeight && !loading) {
       if (currentPage < totalPages) {
         setCurrentPage(currentPage + 1);
       }
     }
-  }, [currentPage, totalPages]);
+  }, [loading, currentPage, totalPages]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -55,7 +65,7 @@ const Cards = () => {
 
   useEffect(() => {
     fetchAnimals(currentPage, animalFilter);
-  }, [fetchAnimals, currentPage, animalFilter]);
+  }, [currentPage, animalFilter]);
 
   return (
     <div className="flex flex-col items-center bg-slate-100 p-4 m-4 rounded-lg">
@@ -66,31 +76,38 @@ const Cards = () => {
         <List
           data={animals}
           component={() => (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-[1900px]">
-              {animals.map((animal) => (
-                <div
-                  key={animal.id}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden p-4"
-                >
-                  <img
-                    src={animal.image_1}
-                    alt={`Imagem de ${animal.name}`}
-                    className="w-full h-64 object-cover mb-4"
-                  />
-                  <h2 className="text-2xl font-bold text-green-700 pt-2">
-                    {animal.name}
-                  </h2>
-                  <p className="text-gray-600 mb-2">Idade: {animal.age}</p>
-                  <p className="text-gray-600 mb-2">Raça: {animal.breed}</p>
-                  <p className="text-gray-700 mb-4">{animal.description}</p>
-                  <Link to="/adopted">
-                    <button className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors duration-300">
-                      Saber mais
-                    </button>
-                  </Link>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-[1900px]">
+                {animals.map((animal) => (
+                  <div
+                    key={animal.id}
+                    className="bg-white rounded-lg shadow-lg overflow-hidden p-4"
+                  >
+                    <img
+                      src={animal.image_1}
+                      alt={`Imagem de ${animal.name}`}
+                      className="w-full h-64 object-cover mb-4"
+                    />
+                    <h2 className="text-2xl font-bold text-green-700 pt-2">
+                      {animal.name}
+                    </h2>
+                    <p className="text-gray-600 mb-2">Idade: {animal.age}</p>
+                    <p className="text-gray-600 mb-2">Raça: {animal.breed}</p>
+                    <p className="text-gray-700 mb-4">{animal.description}</p>
+                    <Link to="/adopted">
+                      <button className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors duration-300">
+                        Saber mais
+                      </button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+              {loading && (
+                <div className="flex mt-8 w-full max-w-[1900px] justify-center">
+                  <Loading text="Carregando mais amiguinhos..." />
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
           emptyComponent={() => (
             <div className="border rounded-lg m-5 p-5 flex flex-col justify-center items-center bg-white ">
