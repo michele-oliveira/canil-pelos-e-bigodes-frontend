@@ -4,7 +4,7 @@ import React from "react";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Adopted from "./pages/Adopted";
+import Animal from "./pages/Animal";
 import Notices from "./pages/Notices";
 import ReportAnimal from "./pages/ReportAnimal";
 
@@ -26,8 +26,8 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/adopted/:animal_id",
-    element: <Adopted />,
+    path: "/animal/:animal_id",
+    element: <Animal />,
   },
   {
     path: "/notices",

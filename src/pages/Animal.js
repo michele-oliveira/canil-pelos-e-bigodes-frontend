@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import { getAnimal } from "../api/animals/animals.api";
 import NotFoundError from "../errors/http/NotFoundError";
 
-function Adopted() {
+function Animal() {
   const [animal, setAnimal] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -145,4 +145,4 @@ function Adopted() {
   );
 }
 
-export default Adopted;
+export default Animal;
