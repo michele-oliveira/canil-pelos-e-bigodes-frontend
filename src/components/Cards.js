@@ -94,7 +94,7 @@ const Cards = () => {
                     <p className="text-gray-600 mb-2">Idade: {animal.age}</p>
                     <p className="text-gray-600 mb-2">Raça: {animal.breed}</p>
                     <p className="text-gray-700 mb-4">{animal.description}</p>
-                    <Link to="/adopted">
+                    <Link to={`/adopted/${animal.id}`}>
                       <button className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors duration-300">
                         Saber mais
                       </button>
