@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { useAnimals } from "../hooks/useAnimals";
 import toast from "../components/react-stacked-toast";
 import Header from "../components/Header";
 import ImageDrop from "../components/ImageDrop";
 import Footer from "../components/Footer";
 import { getAnimal, newAnimal, updateAnimal } from "../api/animals/animals.api";
+import { deleteJwt } from "../utils/jwt";
 import { getFileFromUrl } from "../utils/files";
 import { AnimalType } from "../enums/AnimalType";
 import { AnimalGender } from "../enums/AnimalGender";
@@ -32,6 +34,7 @@ function Report() {
 
   const navigate = useNavigate();
   const { animal_id: animalId } = useParams();
+  const { clearUser } = useAuth();
   const { vaccines, error } = useAnimals();
 
   const formatRequestBody = (data) => {
@@ -138,6 +141,8 @@ function Report() {
           type: "error",
           duration: 3500,
         });
+        clearUser();
+        deleteJwt();
         navigate("/login");
       } else if (error instanceof NotFoundError) {
         toast({
