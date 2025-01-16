@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import toast from "../components/react-stacked-toast";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import Item from "../components/Item";
 import Footer from "../components/Footer";
 import { getAnimal } from "../api/animals/animals.api";
+import { newAdoptionRequest } from "../api/adoptionRequests/adoptionRequests.api";
+import { deleteJwt } from "../utils/jwt";
 import NotFoundError from "../errors/http/NotFoundError";
+import ConflictError from "../errors/http/ConflictError";
 
 function Animal() {
   const [animal, setAnimal] = useState();
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
   const { animal_id: animalId } = useParams();
+  const { clearUser } = useAuth();
 
   const fetchAnimal = async (animalId) => {
     try {
@@ -51,6 +57,49 @@ function Animal() {
         return "Fêmea";
       default:
         return "";
+    }
+  };
+
+  const handleRequestAdoption = async (animalId) => {
+    try {
+      await newAdoptionRequest(animalId);
+      toast({
+        title: "Solicitação enviada com sucesso",
+        type: "success",
+        duration: 2500,
+      });
+      navigate("/");
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        toast({
+          title: "Algo deu errado",
+          description:
+            "O animal pode ter sido adotado, removido ou sua sessão expirou",
+          type: "error",
+          duration: 3500,
+        });
+        clearUser();
+        deleteJwt();
+        navigate("/login");
+      } else if (error instanceof ConflictError) {
+        toast({
+          title: "Ops, tivemos um conflito",
+          description:
+            "Este animal pode já ter sido adotado. Por favor, tente novamente ou acione o suporte, caso achar que esta seja uma falha do sistema",
+          type: "error",
+          duration: 4500,
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Tivemos um erro inesperado",
+          description:
+            "Um erro inesperado ocorreu durante a sua requisição. Por favor, tente novamente ou acione o suporte caso achar que esta seja uma falha do sistema",
+          type: "error",
+          duration: 4500,
+        });
+        navigate("/");
+      }
     }
   };
 
@@ -115,7 +164,10 @@ function Animal() {
                   </p>
 
                   <div className="flex justify-center pt-10">
-                    <button className="w-96 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors duration-300">
+                    <button
+                      onClick={() => handleRequestAdoption(data.id)}
+                      className="w-96 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors duration-300"
+                    >
                       Solicitar adoção
                     </button>
                   </div>
