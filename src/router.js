@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Animal from "./pages/Animal";
 import Notices from "./pages/Notices";
 import ReportAnimal from "./pages/ReportAnimal";
+import AdoptionRequests from "./pages/AdoptionRequests";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
   {
     path: "/report/:animal_id",
     element: <ReportAnimal />,
+  },
+  {
+    path: "/made-adoption-requests",
+    element: <AdoptionRequests type="made" />,
+  },
+  {
+    path: "/received-adoption-requests",
+    element: <AdoptionRequests type="received" />,
   },
 ]);
 

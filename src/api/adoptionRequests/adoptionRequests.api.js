@@ -1,6 +1,7 @@
 import { getJwt } from "../../utils/jwt";
 import NotFoundError from "../../errors/http/NotFoundError";
 import ConflictError from "../../errors/http/ConflictError";
+import BadRequestError from "../../errors/http/BadRequestError";
 
 export const newAdoptionRequest = async (animalId) => {
   const requestBody = JSON.stringify({ animal_id: animalId });
@@ -34,3 +35,31 @@ export const newAdoptionRequest = async (animalId) => {
     throw error;
   }
 };
+
+export const getAdoptionRequests = async (page, limit, type = null) => {
+  let url = `${process.env.REACT_APP_BACKEND_URL}/adoption-requests?page=${page}&limit=${limit}`;
+  if (type) {
+    url += `&type=${type}`;
+  }
+
+  try {
+    const accessToken = getJwt();
+    const response = await fetch(url, {
+      headers: accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const animals = await response.json();
+    if (!response.ok && response.status === 400) {
+      if (response.status === 400) {
+        throw new BadRequestError("Invalid request params");
+      } else {
+        throw new Error(response.statusText);
+      }
+    }
+    return animals;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
