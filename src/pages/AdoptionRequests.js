@@ -200,28 +200,32 @@ const AdoptionRequests = ({ type }) => {
                           </div>
                         </div>
 
-                        <div>
-                          <p>
-                            Autor da solicitação:{" "}
-                            {adoptionRequest.intender.name}
-                          </p>
-                          <p className="mt-3 mb-1">Contato</p>
-                          <p>Telefone: {adoptionRequest.intender.phone}</p>
-                          <p>Email: {adoptionRequest.intender.email}</p>
-                        </div>
+                        {type === "received" && (
+                          <div>
+                            <p>
+                              Autor da solicitação:{" "}
+                              {adoptionRequest.intender.name}
+                            </p>
+                            <p className="mt-3 mb-1">Contato</p>
+                            <p>Telefone: {adoptionRequest.intender.phone}</p>
+                            <p>Email: {adoptionRequest.intender.email}</p>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="flex mt-3 gap-4 justify-end">
-                        <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
-                          Rejeitar
-                        </button>
-                        <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
-                          Contactar <WhatsAppIcon />
-                        </button>
-                        <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
-                          Aceitar
-                        </button>
-                      </div>
+                      {type === "received" && (
+                        <div className="flex mt-3 gap-4 justify-end">
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                            Rejeitar
+                          </button>
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                            Contactar <WhatsAppIcon />
+                          </button>
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                            Aceitar
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {loading && (
