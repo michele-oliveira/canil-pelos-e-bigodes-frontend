@@ -1,17 +1,24 @@
+import BadRequestError from "../../errors/http/BadRequestError";
+import ConflictError from "../../errors/http/ConflictError";
 import UnauthorizedError from "../../errors/http/UnauthorizedError";
 
-export const registerUser = async (user) => {
+export const registerUser = async (newUserData) => {
   try {
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/users/register`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
+        body: newUserData,
       }
     );
     if (!response.ok) {
-      throw new Error(response.statusText);
+      if (response.status === 400) {
+        throw new BadRequestError("Request body is invalid");
+      } else if (response.status === 409) {
+        throw new ConflictError("Email is already registered");
+      } else {
+        throw new Error(response.statusText);
+      }
     }
     const newUser = await response.json();
     return newUser;
