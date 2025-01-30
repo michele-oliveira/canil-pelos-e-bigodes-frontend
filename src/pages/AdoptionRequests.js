@@ -17,6 +17,8 @@ import { ITEMS_PER_PAGE } from "../components/constants/config";
 import InvalidPropsError from "../errors/components/InvalidPropsError";
 import BadRequestError from "../errors/http/BadRequestError";
 
+import profilePicImg from "../assets/images/profile-picture.png";
+
 const AdoptionRequests = ({ type }) => {
   const [adoptionRequests, setAdoptionRequests] = useState();
   const [currentPage, setCurrentPage] = useState(1);
@@ -201,14 +203,29 @@ const AdoptionRequests = ({ type }) => {
                         </div>
 
                         {type === "received" && (
-                          <div>
-                            <p>
-                              Autor da solicitação:{" "}
-                              {adoptionRequest.intender.name}
-                            </p>
-                            <p className="mt-3 mb-1">Contato</p>
-                            <p>Telefone: {adoptionRequest.intender.phone}</p>
-                            <p>Email: {adoptionRequest.intender.email}</p>
+                          <div className="flex flex-row items-center">
+                            {adoptionRequest.intender.profilePicture ? (
+                              <img
+                                src={adoptionRequest.intender.profilePicture}
+                                alt={`Contains a ${adoptionRequest.animal.type}`}
+                                className="h-36 w-36 rounded-full"
+                              />
+                            ) : (
+                              <img
+                                src={profilePicImg}
+                                alt="Contains a profile pic illustration"
+                                className="h-36 w-36 p-1 rounded-full bg-gray-300"
+                              />
+                            )}
+                            <div className="ml-4">
+                              <p>
+                                Autor da solicitação:{" "}
+                                {adoptionRequest.intender.name}
+                              </p>
+                              <p className="mt-3 mb-1">Contato</p>
+                              <p>Telefone: {adoptionRequest.intender.phone}</p>
+                              <p>Email: {adoptionRequest.intender.email}</p>
+                            </div>
                           </div>
                         )}
                       </div>
