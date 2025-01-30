@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import toast from "../components/react-stacked-toast";
 import {
@@ -7,15 +8,23 @@ import {
   FaXmark as CloseIcon,
   FaWhatsapp as WhatsAppIcon,
 } from "react-icons/fa6";
+import { useAuth } from "../hooks/useAuth";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import List from "../components/List";
 import Container from "../components/Container";
 import Footer from "../components/Footer";
-import { getAdoptionRequests } from "../api/adoptionRequests/adoptionRequests.api";
+import {
+  getAdoptionRequests,
+  acceptAdoptionRequest,
+  rejectAdoptionRequest,
+} from "../api/adoptionRequests/adoptionRequests.api";
 import { ITEMS_PER_PAGE } from "../components/constants/config";
 import InvalidPropsError from "../errors/components/InvalidPropsError";
 import BadRequestError from "../errors/http/BadRequestError";
+import UnauthorizedError from "../errors/http/UnauthorizedError";
+import NotFoundError from "../errors/http/NotFoundError";
+import ConflictError from "../errors/http/ConflictError";
 
 import profilePicImg from "../assets/images/profile-picture.png";
 
@@ -24,6 +33,10 @@ const AdoptionRequests = ({ type }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [waitingRequest, setWaitingRequest] = useState(null);
+
+  const navigate = useNavigate();
+  const { clearUser } = useAuth();
 
   const getAnimalType = (type, capitalized = false) => {
     switch (type) {
@@ -130,6 +143,116 @@ const AdoptionRequests = ({ type }) => {
     }
   };
 
+  const handleAcceptAdoptionRequest = async (adoptionRequestId) => {
+    try {
+      setWaitingRequest("accept");
+
+      await acceptAdoptionRequest(adoptionRequestId);
+
+      toast({
+        title: "Solicitação aceita com sucesso",
+        type: "success",
+        duration: 2500,
+      });
+      fetchAdoptionRequests(currentPage);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        toast({
+          title: "Permissão negada",
+          description:
+            "Ops... parece que você não tem permissão para fazer isso. Se achar que se trata de uma falha no sistema, contate o suporte",
+          type: "error",
+          duration: 3500,
+        });
+        clearUser();
+        navigate("/login");
+      } else if (error instanceof NotFoundError) {
+        toast({
+          title: "Solicitação de adoção não encontrada",
+          description:
+            "Ops... parece que nosso servidor não encontrou esta solicitação. Por favor, tente novamente ou acione o suporte caso achar que se trata de uma falha no sistema",
+          type: "error",
+          duration: 4000,
+        });
+      } else if (error instanceof ConflictError) {
+        toast({
+          title: "Conflito ao atualizar a solicitação",
+          description:
+            "Ops... parece que esta solicitação já não pode mais ter seu estado alterado. Por favor, tente novamente ou acione o suporte achar que se trata de uma falha no sistema",
+          type: "error",
+          duration: 4000,
+        });
+      } else {
+        toast({
+          title: "Erro inesperado na requisição",
+          description:
+            "Ops... tivemos um erro inesperado durante a requisição. Por favor, tente novamente ou acione o suporte caso o problema persista",
+          type: "error",
+          duration: 3500,
+        });
+      }
+    } finally {
+      setWaitingRequest(null);
+    }
+  };
+
+  const handleRejectAdoptionRequest = async (adoptionRequestId) => {
+    try {
+      setWaitingRequest("reject");
+
+      await rejectAdoptionRequest(adoptionRequestId);
+
+      toast({
+        title: "Solicitação rejeitada com sucesso",
+        type: "success",
+        duration: 2500,
+      });
+      fetchAdoptionRequests(currentPage);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        toast({
+          title: "Permissão negada",
+          description:
+            "Ops... parece que você não tem permissão para fazer isso. Se achar que se trata de uma falha no sistema, contate o suporte",
+          type: "error",
+          duration: 3500,
+        });
+        clearUser();
+        navigate("/login");
+      } else if (error instanceof NotFoundError) {
+        toast({
+          title: "Solicitação de adoção não encontrada",
+          description:
+            "Ops... parece que nosso servidor não encontrou esta solicitação. Por favor, tente novamente ou acione o suporte caso achar que se trata de uma falha no sistema",
+          type: "error",
+          duration: 4000,
+        });
+      } else if (error instanceof ConflictError) {
+        toast({
+          title: "Conflito ao atualizar a solicitação",
+          description:
+            "Ops... parece que esta solicitação já não pode mais ter seu estado alterado. Por favor, tente novamente ou acione o suporte achar que se trata de uma falha no sistema",
+          type: "error",
+          duration: 4000,
+        });
+      } else {
+        toast({
+          title: "Erro inesperado na requisição",
+          description:
+            "Ops... tivemos um erro inesperado durante a requisição. Por favor, tente novamente ou acione o suporte caso o problema persista",
+          type: "error",
+          duration: 3500,
+        });
+      }
+    } finally {
+      setWaitingRequest(null);
+    }
+  };
+
+  const handleContact = (phoneNumber) => {
+    window.open(`https://wa.me/${phoneNumber}?text=Olá`, "_blank");
+  };
+
   const handleScroll = useCallback(() => {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
@@ -232,14 +355,43 @@ const AdoptionRequests = ({ type }) => {
 
                       {type === "received" && (
                         <div className="flex mt-8 gap-4 justify-end">
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-red-800 hover:bg-red-700 text-gray-100 font-semibold">
-                            Rejeitar
+                          <button
+                            onClick={() =>
+                              handleRejectAdoptionRequest(adoptionRequest.id)
+                            }
+                            className="flex items-center gap-1 p-2 rounded-md bg-red-800 hover:bg-red-700 text-gray-100 font-semibold"
+                          >
+                            {waitingRequest === "reject" ? (
+                              <>
+                                <span className="mr-1">Processando</span>
+                                <Loading className="h-5 w-5 text-white" />
+                              </>
+                            ) : (
+                              "Rejeitar"
+                            )}
                           </button>
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-lime-800 hover:bg-lime-700 text-white font-semibold">
+                          <button
+                            onClick={() =>
+                              handleContact(adoptionRequest.intender.phone)
+                            }
+                            className="flex items-center gap-1 p-2 rounded-md bg-lime-800 hover:bg-lime-700 text-white font-semibold"
+                          >
                             Contactar <WhatsAppIcon />
                           </button>
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-green-800 hover:bg-green-700 text-white font-semibold">
-                            Aceitar
+                          <button
+                            onClick={() =>
+                              handleAcceptAdoptionRequest(adoptionRequest.id)
+                            }
+                            className="flex items-center gap-1 p-2 rounded-md bg-green-800 hover:bg-green-700 text-white font-semibold"
+                          >
+                            {waitingRequest === "accept" ? (
+                              <>
+                                <span className="mr-1">Processando</span>
+                                <Loading className="h-5 w-5 text-white" />
+                              </>
+                            ) : (
+                              "Aceitar"
+                            )}
                           </button>
                         </div>
                       )}

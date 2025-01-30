@@ -2,6 +2,7 @@ import { getJwt } from "../../utils/jwt";
 import NotFoundError from "../../errors/http/NotFoundError";
 import ConflictError from "../../errors/http/ConflictError";
 import BadRequestError from "../../errors/http/BadRequestError";
+import UnauthorizedError from "../../errors/http/UnauthorizedError";
 
 export const newAdoptionRequest = async (animalId) => {
   const requestBody = JSON.stringify({ animal_id: animalId });
@@ -62,4 +63,74 @@ export const getAdoptionRequests = async (page, limit, type = null) => {
     console.error(error);
     throw error;
   }
-}
+};
+
+export const acceptAdoptionRequest = async (adoptionRequestId) => {
+  try {
+    const accessToken = getJwt();
+
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/adoption-requests/${adoptionRequestId}/accept`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new UnauthorizedError(
+          "You cannot accept an adoption request that is not yours"
+        );
+      } else if (response.status === 404) {
+        throw new NotFoundError("Adoption request not found");
+      } else if (response.status === 409) {
+        throw new ConflictError(
+          "You cannot accept an adoption request that is not pending"
+        );
+      } else {
+        throw new Error(response.statusText);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const rejectAdoptionRequest = async (adoptionRequestId) => {
+  try {
+    const accessToken = getJwt();
+
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/adoption-requests/${adoptionRequestId}/reject`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new UnauthorizedError(
+          "You cannot reject an adoption request that is not yours"
+        );
+      } else if (response.status === 404) {
+        throw new NotFoundError("Adoption request not found");
+      } else if (response.status === 409) {
+        throw new ConflictError(
+          "You cannot reject an adoption request that is not pending"
+        );
+      } else {
+        throw new Error(response.statusText);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
