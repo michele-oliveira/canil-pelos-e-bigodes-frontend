@@ -177,7 +177,7 @@ const AdoptionRequests = ({ type }) => {
                     <div
                       className={`mt-4 p-4 ${getBackgroundFromStatus(
                         adoptionRequest.status
-                      )} rounded-lg`}
+                      )} rounded-lg shadow-lg shadow-gray-300`}
                       key={adoptionRequest.id}
                     >
                       <div className="flex justify-end mb-3">
@@ -231,14 +231,14 @@ const AdoptionRequests = ({ type }) => {
                       </div>
 
                       {type === "received" && (
-                        <div className="flex mt-3 gap-4 justify-end">
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                        <div className="flex mt-8 gap-4 justify-end">
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-red-800 hover:bg-red-700 text-gray-100 font-semibold">
                             Rejeitar
                           </button>
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-lime-800 hover:bg-lime-700 text-white font-semibold">
                             Contactar <WhatsAppIcon />
                           </button>
-                          <button className="flex items-center gap-1 p-2 rounded-md bg-yellow-300 hover:bg-yellow-400">
+                          <button className="flex items-center gap-1 p-2 rounded-md bg-green-800 hover:bg-green-700 text-white font-semibold">
                             Aceitar
                           </button>
                         </div>
