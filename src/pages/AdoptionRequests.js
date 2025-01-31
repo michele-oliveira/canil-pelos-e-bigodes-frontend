@@ -28,6 +28,9 @@ import ConflictError from "../errors/http/ConflictError";
 
 import profilePicImg from "../assets/images/profile-picture.png";
 import InvalidMethodParamsError from "../errors/validation/InvalidMethodParamsError";
+import { AnimalType } from "../enums/AnimalType";
+import { AdoptionRequestStatus } from "../enums/AdoptionRequestStatus";
+import { AdoptionRequestType } from "../enums/AdoptionRequestType";
 
 const AdoptionRequests = ({ type }) => {
   const [adoptionRequests, setAdoptionRequests] = useState();
@@ -41,9 +44,9 @@ const AdoptionRequests = ({ type }) => {
 
   const getAnimalType = (type, capitalized = false) => {
     switch (type) {
-      case "dog":
+      case AnimalType.DOG:
         return capitalized ? "Cachorro" : "cachorro";
-      case "cat":
+      case AnimalType.CAT:
         return capitalized ? "Gato" : "gato";
       default:
         return capitalized ? "Não informado" : "não informado";
@@ -52,11 +55,11 @@ const AdoptionRequests = ({ type }) => {
 
   const getBackgroundFromStatus = (status) => {
     switch (status) {
-      case "pending":
+      case AdoptionRequestStatus.PENDING:
         return "bg-gray-200";
-      case "accepted":
+      case AdoptionRequestStatus.ACCEPTED:
         return "bg-green-200";
-      case "rejected":
+      case AdoptionRequestStatus.REJECTED:
         return "bg-red-200";
       default:
         return "";
@@ -65,21 +68,21 @@ const AdoptionRequests = ({ type }) => {
 
   const getLabeledIconFromStatus = (status) => {
     switch (status) {
-      case "pending":
+      case AdoptionRequestStatus.PENDING:
         return (
           <span className="flex flex-row items-center text-gray-700">
             <p className="mr-1">Pendente</p>
             <ClockIcon />
           </span>
         );
-      case "accepted":
+      case AdoptionRequestStatus.ACCEPTED:
         return (
           <span className="flex flex-row items-center text-green-700">
             <p className="mr-1">Aceita</p>
             <CheckIcon />
           </span>
         );
-      case "rejected":
+      case AdoptionRequestStatus.REJECTED:
         return (
           <span className="flex flex-row items-center text-red-700">
             <p className="mr-1">Rejeitada</p>
@@ -95,10 +98,16 @@ const AdoptionRequests = ({ type }) => {
     try {
       setLoading(true);
 
-      if (!type || !["made", "received"].includes(type)) {
+      if (
+        !type ||
+        ![AdoptionRequestType.MADE, AdoptionRequestType.RECEIVED].includes(type)
+      ) {
         throw new InvalidPropsError("'type' prop must be 'made' or 'received'");
       }
-      const typeFilter = type === "made" ? "made" : "received";
+      const typeFilter =
+        type === AdoptionRequestType.MADE
+          ? AdoptionRequestType.MADE
+          : AdoptionRequestType.RECEIVED;
       const { adoptionRequests: adoptionRequestsResponse, totalPages } =
         await getAdoptionRequests(page, ITEMS_PER_PAGE, typeFilter);
 
@@ -316,7 +325,9 @@ const AdoptionRequests = ({ type }) => {
     fetchAdoptionRequests(currentPage);
   }, [currentPage]);
 
-  if (!["made", "received"].includes(type)) {
+  if (
+    ![AdoptionRequestType.MADE, AdoptionRequestType.RECEIVED].includes(type)
+  ) {
     console.error("'type' prop must be 'made' or 'received'");
     return null;
   }
@@ -364,7 +375,7 @@ const AdoptionRequests = ({ type }) => {
                           </div>
                         </div>
 
-                        {type === "received" && (
+                        {type === AdoptionRequestType.RECEIVED && (
                           <div className="flex flex-row items-center">
                             {adoptionRequest.intender.profilePicture ? (
                               <img
@@ -392,48 +403,50 @@ const AdoptionRequests = ({ type }) => {
                         )}
                       </div>
 
-                      {type === "received" && (
-                        <div className="flex mt-8 gap-4 justify-end">
-                          <button
-                            onClick={() =>
-                              handleRejectAdoptionRequest(adoptionRequest.id)
-                            }
-                            className="flex items-center gap-1 p-2 rounded-md bg-red-800 hover:bg-red-700 text-gray-100 font-semibold"
-                          >
-                            {waitingRequest === "reject" ? (
-                              <>
-                                <span className="mr-1">Processando</span>
-                                <Loading className="h-5 w-5 text-white" />
-                              </>
-                            ) : (
-                              "Rejeitar"
-                            )}
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleContact(adoptionRequest.intender.phone)
-                            }
-                            className="flex items-center gap-1 p-2 rounded-md bg-lime-800 hover:bg-lime-700 text-white font-semibold"
-                          >
-                            Contactar <WhatsAppIcon />
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleAcceptAdoptionRequest(adoptionRequest.id)
-                            }
-                            className="flex items-center gap-1 p-2 rounded-md bg-green-800 hover:bg-green-700 text-white font-semibold"
-                          >
-                            {waitingRequest === "accept" ? (
-                              <>
-                                <span className="mr-1">Processando</span>
-                                <Loading className="h-5 w-5 text-white" />
-                              </>
-                            ) : (
-                              "Aceitar"
-                            )}
-                          </button>
-                        </div>
-                      )}
+                      {type === AdoptionRequestType.RECEIVED &&
+                        adoptionRequest.status ===
+                          AdoptionRequestStatus.PENDING && (
+                          <div className="flex mt-8 gap-4 justify-end">
+                            <button
+                              onClick={() =>
+                                handleRejectAdoptionRequest(adoptionRequest.id)
+                              }
+                              className="flex items-center gap-1 p-2 rounded-md bg-red-800 hover:bg-red-700 text-gray-100 font-semibold"
+                            >
+                              {waitingRequest === "reject" ? (
+                                <>
+                                  <span className="mr-1">Processando</span>
+                                  <Loading className="h-5 w-5 text-white" />
+                                </>
+                              ) : (
+                                "Rejeitar"
+                              )}
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleContact(adoptionRequest.intender.phone)
+                              }
+                              className="flex items-center gap-1 p-2 rounded-md bg-lime-800 hover:bg-lime-700 text-white font-semibold"
+                            >
+                              Contactar <WhatsAppIcon />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleAcceptAdoptionRequest(adoptionRequest.id)
+                              }
+                              className="flex items-center gap-1 p-2 rounded-md bg-green-800 hover:bg-green-700 text-white font-semibold"
+                            >
+                              {waitingRequest === "accept" ? (
+                                <>
+                                  <span className="mr-1">Processando</span>
+                                  <Loading className="h-5 w-5 text-white" />
+                                </>
+                              ) : (
+                                "Aceitar"
+                              )}
+                            </button>
+                          </div>
+                        )}
                     </div>
                   ))}
                   {loading && (
