@@ -23,7 +23,7 @@ const Cards = () => {
         animalType
       );
 
-      if (animals) {
+      if (animals && page !== currentPage) {
         setAnimals((previousValue) => [...previousValue, ...animalsResponse]);
       } else {
         setAnimals(animalsResponse);

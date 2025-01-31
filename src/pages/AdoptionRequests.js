@@ -102,7 +102,7 @@ const AdoptionRequests = ({ type }) => {
       const { adoptionRequests: adoptionRequestsResponse, totalPages } =
         await getAdoptionRequests(page, ITEMS_PER_PAGE, typeFilter);
 
-      if (adoptionRequests) {
+      if (adoptionRequests && page !== currentPage) {
         setAdoptionRequests((previousValue) => [
           ...previousValue,
           ...adoptionRequestsResponse,
