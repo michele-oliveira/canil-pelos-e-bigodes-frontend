@@ -27,6 +27,7 @@ import NotFoundError from "../errors/http/NotFoundError";
 import ConflictError from "../errors/http/ConflictError";
 
 import profilePicImg from "../assets/images/profile-picture.png";
+import InvalidMethodParamsError from "../errors/validation/InvalidMethodParamsError";
 
 const AdoptionRequests = ({ type }) => {
   const [adoptionRequests, setAdoptionRequests] = useState();
@@ -117,7 +118,7 @@ const AdoptionRequests = ({ type }) => {
         toast({
           title: "Ops... tivemos um erro inesperado",
           description:
-            "Parece que esta página foi chamada com parâmetros inválidos",
+            "A chamada foi feita com parâmetro(s) incorreto(s). Por favor, tente novamente ou acione o suporte caso achar que se trata de uma falha no sistema",
           type: "error",
           duration: 3000,
         });
@@ -145,6 +146,17 @@ const AdoptionRequests = ({ type }) => {
 
   const handleAcceptAdoptionRequest = async (adoptionRequestId) => {
     try {
+      if (!adoptionRequestId) {
+        throw new InvalidMethodParamsError(
+          "adoptionRequestId is a required param"
+        );
+      }
+      if (typeof adoptionRequestId !== "string") {
+        throw new InvalidMethodParamsError(
+          "adoptionRequestId must be a string"
+        );
+      }
+
       setWaitingRequest("accept");
 
       await acceptAdoptionRequest(adoptionRequestId);
@@ -156,7 +168,23 @@ const AdoptionRequests = ({ type }) => {
       });
       fetchAdoptionRequests(currentPage);
     } catch (error) {
-      if (error instanceof UnauthorizedError) {
+      if (error instanceof InvalidPropsError) {
+        toast({
+          title: "Ops... tivemos um erro inesperado",
+          description:
+            "A chamada foi feita com parâmetro(s) incorreto(s). Por favor, tente novamente ou acione o suporte caso achar que se trata de uma falha no sistema",
+          type: "error",
+          duration: 3000,
+        });
+      } else if (error instanceof InvalidMethodParamsError) {
+        toast({
+          title: "Permissão negada",
+          description:
+            "Ops... parece que você não tem permissão para fazer isso. Se achar que se trata de uma falha no sistema, contate o suporte",
+          type: "error",
+          duration: 3500,
+        });
+      } else if (error instanceof UnauthorizedError) {
         toast({
           title: "Permissão negada",
           description:
@@ -198,6 +226,17 @@ const AdoptionRequests = ({ type }) => {
 
   const handleRejectAdoptionRequest = async (adoptionRequestId) => {
     try {
+      if (!adoptionRequestId) {
+        throw new InvalidMethodParamsError(
+          "adoptionRequestId is a required param"
+        );
+      }
+      if (typeof adoptionRequestId !== "string") {
+        throw new InvalidMethodParamsError(
+          "adoptionRequestId must be a string"
+        );
+      }
+
       setWaitingRequest("reject");
 
       await rejectAdoptionRequest(adoptionRequestId);
