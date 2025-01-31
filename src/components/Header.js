@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { IoMdMenu as MenuIcon, IoIosLogOut as LogoutIcon } from "react-icons/io";
+import {
+  IoMdMenu as MenuIcon,
+  IoIosLogOut as LogoutIcon,
+} from "react-icons/io";
 
 import logo from "../assets/images/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdoptionRequestsSubmenuOpen, setIsAdoptionRequestsSubmenuOpen] =
+    useState(false);
 
   return (
     <header className="bg-gray-800 text-white py-4 px-6">
@@ -33,25 +38,44 @@ const Header = () => {
         <nav className="hidden md:flex gap-5 space-x-1">
           <Link
             to="/"
-            className="text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
+            className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
           >
             Home
           </Link>
           <Link
             to="/login"
-            className="text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
+            className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
           >
             Adote um Amigo
           </Link>
           <Link
             to="/report"
-            className="text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
+            className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
           >
             Informe uma Adoção
           </Link>
-          <button
-            className="text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
-          >
+          <div className="relative group py-2 text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300">
+            <span className="cursor-pointer">Solicitações para adoção</span>
+            <ul className="absolute hidden left-1/2 transform -translate-x-1/2 mt-2 p-3 z-30 group-hover:block bg-gray-800 rounded-md border border-gray-500 shadow-md">
+              <li>
+                <Link
+                  to="/made-adoption-requests"
+                  className="block mb-2 text-nowrap hover:text-green-600"
+                >
+                  Minhas solicitações
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/received-adoption-requests"
+                  className="block text-nowrap hover:text-green-600"
+                >
+                  Solicitações recebidas
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <button className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300">
             <span className="flex items-center">
               <p className="mr-1">Sair</p>
               <LogoutIcon className="text-lg" />
@@ -61,7 +85,7 @@ const Header = () => {
 
         <nav
           className={`flex flex-col w-full gap-4 overflow-hidden md:hidden items-end font-semibold transition-all duration-300 ease-in-out transform ${
-            isMenuOpen ? "mt-2 max-h-40 opacity-100" : "mt-0 max-h-0 opacity-0"
+            isMenuOpen ? "mt-2 max-h-64 opacity-100" : "mt-0 max-h-0 opacity-0"
           }`}
         >
           <Link
@@ -82,9 +106,42 @@ const Header = () => {
           >
             Informe uma Adoção
           </Link>
-          <button
-            className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300"
-          >
+          <div>
+            <button
+              type="button"
+              onClick={() =>
+                setIsAdoptionRequestsSubmenuOpen(!isAdoptionRequestsSubmenuOpen)
+              }
+              className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300"
+            >
+              Solicitações para adoção
+            </button>
+            <ul
+              className={`flex flex-col items-end pr-1.5 leading-6 transition-all duration-300 ease-in-out transform ${
+                isAdoptionRequestsSubmenuOpen
+                  ? "mt-1 max-h-12 opacity-100"
+                  : "mt-0 max-h-0 opacity-0"
+              } border-r border-gray-500`}
+            >
+              <li>
+                <Link
+                  className="text-green-300 hover:text-green-500"
+                  to="/made-adoption-requests"
+                >
+                  Minhas solicitações
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-green-300 hover:text-green-500"
+                  to="/received-adoption-requests"
+                >
+                  Solicitações recebidas
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <button className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300">
             <span className="flex items-center">
               <p className="mr-1">Sair</p>
               <LogoutIcon className="text-lg" />
