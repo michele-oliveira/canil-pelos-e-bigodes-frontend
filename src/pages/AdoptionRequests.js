@@ -357,7 +357,7 @@ const AdoptionRequests = ({ type }) => {
                         {getLabeledIconFromStatus(adoptionRequest.status)}
                       </div>
 
-                      <div className="flex flex-row justify-between">
+                      <div className="flex flex-col lg:flex-row justify-between">
                         <div className="flex flex-row items-center">
                           <img
                             src={adoptionRequest.animal.image_1}
@@ -376,7 +376,7 @@ const AdoptionRequests = ({ type }) => {
                         </div>
 
                         {type === AdoptionRequestType.RECEIVED && (
-                          <div className="flex flex-row items-center">
+                          <div className="flex flex-row items-center mt-8 lg:mt-0">
                             {adoptionRequest.intender.profilePicture ? (
                               <img
                                 src={adoptionRequest.intender.profilePicture}
@@ -406,7 +406,7 @@ const AdoptionRequests = ({ type }) => {
                       {type === AdoptionRequestType.RECEIVED &&
                         adoptionRequest.status ===
                           AdoptionRequestStatus.PENDING && (
-                          <div className="flex mt-8 gap-4 justify-end">
+                          <div className="flex mt-8 gap-4 justify-center lg:justify-end">
                             <button
                               onClick={() =>
                                 handleRejectAdoptionRequest(adoptionRequest.id)
