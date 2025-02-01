@@ -56,7 +56,16 @@ const Header = () => {
           </Link>
           <div className="relative group py-2 text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300">
             <span className="cursor-pointer">Solicitações para adoção</span>
-            <ul className="absolute hidden left-1/2 transform -translate-x-1/2 mt-2 p-3 z-30 group-hover:block bg-gray-800 rounded-md border border-gray-500 shadow-md">
+            <ul
+              className="absolute hidden left-1/2 transform -translate-x-1/2 mt-2 p-3 z-30 group-hover:block 
+                 bg-gray-800 border border-gray-500 rounded-md shadow-md
+                 before:content-[''] before:absolute before:-top-2 before:left-1/2 before:-translate-x-1/2 
+                 before:w-0 before:h-0 before:border-l-[8px] before:border-r-[8px] before:border-b-[8px] 
+                 before:border-l-transparent before:border-r-transparent before:border-b-gray-500
+                 after:content-[''] after:absolute after:-top-[7px] after:left-1/2 after:-translate-x-1/2
+                 after:w-0 after:h-0 after:border-l-[7px] after:border-r-[7px] after:border-b-[7px] 
+                 after:border-l-transparent after:border-r-transparent after:border-b-gray-800"
+            >
               <li>
                 <Link
                   to="/made-adoption-requests"
