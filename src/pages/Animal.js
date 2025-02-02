@@ -83,11 +83,11 @@ function Animal() {
         navigate("/login");
       } else if (error instanceof ConflictError) {
         toast({
-          title: "Ops, tivemos um conflito",
+          title: "Ops, tivemos um conflito na sua solicitação",
           description:
-            "Este animal pode já ter sido adotado. Por favor, tente novamente ou acione o suporte, caso achar que esta seja uma falha do sistema",
+            "Este animal pode já ter sido adotado ou você pode ter uma solicitação pendente. Verifique e tente novamente ou acione o suporte, caso achar que esta seja uma falha do sistema",
           type: "error",
-          duration: 4500,
+          duration: 5500,
         });
         navigate("/");
       } else {
