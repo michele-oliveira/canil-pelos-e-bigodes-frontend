@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import {
   IoMdMenu as MenuIcon,
   IoIosLogOut as LogoutIcon,
@@ -11,6 +12,14 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdoptionRequestsSubmenuOpen, setIsAdoptionRequestsSubmenuOpen] =
     useState(false);
+
+  const navigate = useNavigate();
+  const { clearUser } = useAuth();
+
+  const handleLogout = () => {
+    clearUser();
+    navigate("/login");
+  };
 
   return (
     <header className="bg-gray-800 text-white py-4 px-6">
@@ -84,7 +93,10 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <button className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300">
+          <button
+            onClick={handleLogout}
+            className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
+          >
             <span className="flex items-center">
               <p className="mr-1">Sair</p>
               <LogoutIcon className="text-lg" />
@@ -150,7 +162,10 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <button className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300">
+          <button
+            onClick={handleLogout}
+            className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300"
+          >
             <span className="flex items-center">
               <p className="mr-1">Sair</p>
               <LogoutIcon className="text-lg" />
