@@ -4,7 +4,7 @@ import dogCat from "../assets/images/cachorro e gato 2.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white flex flex-col md:flex-row items-center justify-between mt-5">
+    <footer className="bg-gray-800 text-white flex flex-col md:flex-row items-center justify-between">
       <img
         src={dogCat}
         alt="Cachorro e gato"

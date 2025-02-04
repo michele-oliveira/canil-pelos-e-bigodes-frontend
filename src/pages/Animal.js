@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import toast from "../components/react-stacked-toast";
+import Container from "../components/Container";
+import Content from "../components/Content";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import Item from "../components/Item";
@@ -108,92 +110,95 @@ function Animal() {
   }, [animalId]);
 
   return (
-    <div>
+    <Container>
       <Header />
-      <div className="m-10 flex justify-center flex-col items-center">
-        <h1 className="text-3xl font-bold mb-6 text-center">
-          Conheça seu novo companheiro
-        </h1>
-        <p className="text-lg pt-5">
-          Seu companheirinho para todas as horas espera por você!
-        </p>
-        <p className="text-lg p-5">
-          Basta clicar no anúncio e você será redirecionado para o WhatsApp do
-          anunciante para combinarem a melhor forma de adotá-lo.
-        </p>
-      </div>
+      <Content>
+        <div className="m-10 flex justify-center flex-col items-center">
+          <h1 className="text-3xl font-bold mb-4 text-center">
+            Conheça seu novo companheiro
+          </h1>
+          <p className="text-lg pt-5 text-center">
+            Seu companheirinho para todas as horas espera por você!
+          </p>
+          <p className="text-lg pt-5 text-center">
+            Basta clicar no anúncio e você será redirecionado para o WhatsApp do
+            anunciante para combinarem a melhor forma de adotá-lo.
+          </p>
+        </div>
 
-      {isLoading ? (
-        <Loading text="Carregando informações deste amiguinho..." />
-      ) : (
-        <Item
-          data={animal}
-          component={(data) => (
-            <div className="flex w-full justify-center">
-              <div className="border bg-gray-800 m-10 px-24 max-w-[1900px] rounded-lg flex flex-col md:flex-row justify-center items-center">
-                <img
-                  src={data.image_2}
-                  className="w-96 h-96 object-cover rounded-full md:mr-6 mb-4 md:mb-0"
-                  alt="Cachorro para adoção"
-                />
-                <div className="flex flex-col text-white text-2xl p-24">
-                  <p className="mb-2">
-                    <b>Nome: </b>
-                    {data.name}
-                  </p>
-                  <p className="mb-2">
-                    <b>Sexo: </b>
-                    {getGender(data.gender)}
-                  </p>
-                  <p className="mb-2">
-                    <b>Idade: </b>
-                    {data.age + (data.age > 1 ? " meses" : "mês")}
-                  </p>
-                  {data.vaccines.length > 0 && (
+        {isLoading ? (
+          <Loading text="Carregando informações deste amiguinho..." />
+        ) : (
+          <Item
+            data={animal}
+            component={(data) => (
+              <div className="flex w-full justify-center">
+                <div className="flex flex-col md:flex-row justify-center items-center mx-2 mb-4 px-2 py-4 lg:px-24 max-w-[1900px] bg-gray-800 rounded-lg">
+                  <img
+                    src={data.image_2}
+                    className="w-32 h-32 md:w-48 md:h-48 lg:w-96 lg:h-96 md:mr-6 mb-4 md:mb-0 object-cover rounded-full"
+                    alt="Cachorro para adoção"
+                  />
+                  <div className="flex flex-col p-1 lg:p-24 text-lg md:text-xl lg:text-2xl text-white">
                     <p className="mb-2">
-                      <b>Vacinas: </b>
-                      {data.vaccines.map((vaccine) => vaccine.name).join(", ")}
+                      <b>Nome: </b>
+                      {data.name}
                     </p>
-                  )}
-                  <p className="mb-2">
-                    <b>Comportamento: </b>
-                    {data.description}
-                  </p>
-                  <p className="mb-4">
-                    <b>Raça:</b> Border Collie
-                  </p>
+                    <p className="mb-2">
+                      <b>Sexo: </b>
+                      {getGender(data.gender)}
+                    </p>
+                    <p className="mb-2">
+                      <b>Idade: </b>
+                      {data.age + (data.age > 1 ? " meses" : "mês")}
+                    </p>
+                    {data.vaccines.length > 0 && (
+                      <p className="mb-2">
+                        <b>Vacinas: </b>
+                        {data.vaccines
+                          .map((vaccine) => vaccine.name)
+                          .join(", ")}
+                      </p>
+                    )}
+                    <p className="mb-2">
+                      <b>Comportamento: </b>
+                      {data.description}
+                    </p>
+                    <p className="mb-2">
+                      <b>Raça:</b> Border Collie
+                    </p>
 
-                  <div className="flex justify-center pt-10">
-                    <button
-                      onClick={() => handleRequestAdoption(data.id)}
-                      className="w-96 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors duration-300"
-                    >
-                      Solicitar adoção
-                    </button>
+                    <div className="flex justify-center mt-4 md:mt-6">
+                      <button
+                        onClick={() => handleRequestAdoption(data.id)}
+                        className="w-96 py-2 bg-green-600 text-white hover:bg-green-700 rounded transition-colors duration-300"
+                      >
+                        Solicitar adoção
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          emptyComponent={() => (
-            <div className="flex w-full justify-center">
-              <div className="flex flex-col m-5 mt-10 p-5 max-w-[960px] justify-center items-center border rounded-lg">
-                <p className="text-gray-800 font-bold">
-                  Amiguinho não encontrado
-                </p>
-                <p className="mt-5 text-gray-900 text-sm">
-                  O amiguinho que você está procurando não foi encontrado. O
-                  sistema pode estar indisponível ou este amiguinho pode ter
-                  sido removido
-                </p>
+            )}
+            emptyComponent={() => (
+              <div className="flex w-full justify-center">
+                <div className="flex flex-col m-5 mt-10 p-5 max-w-[960px] justify-center items-center border rounded-lg">
+                  <p className="text-gray-800 font-bold">
+                    Amiguinho não encontrado
+                  </p>
+                  <p className="mt-5 text-gray-900 text-sm">
+                    O amiguinho que você está procurando não foi encontrado. O
+                    sistema pode estar indisponível ou este amiguinho pode ter
+                    sido removido
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-        />
-      )}
-
+            )}
+          />
+        )}
+      </Content>
       <Footer />
-    </div>
+    </Container>
   );
 }
 

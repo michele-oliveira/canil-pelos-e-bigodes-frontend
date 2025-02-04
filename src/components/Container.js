@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 const Container = ({ children, className }) => (
-  <div className={"min-h-[100vh] " + className}>{children}</div>
+  <div className={"flex flex-col min-h-screen " + className}>{children}</div>
 );
 
 Container.propTypes = {

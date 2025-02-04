@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "../components/react-stacked-toast";
-import Footer from "../components/Footer";
+import Container from "../components/Container";
+import Content from "../components/Content";
 import Header from "../components/Header";
 import ProfilePictureSelector from "../components/ProfilePictureSelector";
+import Footer from "../components/Footer";
 import { registerUser } from "../api/users/users.api";
 import InvalidImageFileError from "../errors/files/InvalidImageFileError";
 import InvalidFileAmountSelectedError from "../errors/files/InvalidFileAmountSelectedError";
@@ -119,84 +121,85 @@ function Register() {
   };
 
   return (
-    <div>
+    <Container>
       <Header />
-      <div className="relative bg-gray-800 m-20 p-32 rounded-lg flex flex-col md:flex-row items-center overflow-hidden mx-auto max-w-4xl">
-        <div className="relative z-10 flex flex-col justify-center flex-grow md:mr-6 mb-6 md:mb-0">
-          <h1
-            className="flex justify-center mb-4 pb-5 text-2xl md:text-3xl font-bold text-gray-50 text-center md:text-left"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            Cadastre-se e faça parte da nossa família
-          </h1>
-          <form onSubmit={handleSignup} className="flex flex-col gap-4 mb-6">
-            <div className="flex flex-col w-full mb-3 items-center">
-              <ProfilePictureSelector
-                image={profilePic}
-                setImage={setProfilePic}
-                onError={onSelectImageError}
-              />
-              <h4 className="mt-3 text-lg text-white">Sua foto de perfil</h4>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Nome"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="p-2 rounded-md border border-gray-300"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="p-2 rounded-md border border-gray-300"
-            />
-            <input
-              type="tel"
-              placeholder="Telefone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="p-2 rounded-md border border-gray-300"
-            />
-            <input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="p-2 rounded-md border border-gray-300"
-            />
-            <input
-              type="password"
-              placeholder="Confirmar senha"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="p-2 rounded-md border border-gray-300"
-            />
-            <button
-              type="submit"
-              className="bg-green-600 text-white py-2 text-lg rounded hover:bg-green-700 transition-colors duration-300"
+      <Content>
+        <div className="relative bg-gray-800 m-20 p-32 rounded-lg flex flex-col md:flex-row items-center overflow-hidden mx-auto max-w-4xl">
+          <div className="relative z-10 flex flex-col justify-center flex-grow md:mr-6 mb-6 md:mb-0">
+            <h1
+              className="flex justify-center mb-4 pb-5 text-2xl md:text-3xl font-bold text-gray-50 text-center md:text-left"
+              style={{ fontFamily: "Montserrat, sans-serif" }}
             >
-              Cadastrar
-            </button>
-          </form>
-          <p className="text-lg text-gray-50 text-center">
-            Já tem uma conta?{" "}
-            <button type="submit" className="text-green-400 underline">
-              Faça Login
-            </button>
-          </p>
-        </div>
-      </div>
+              Cadastre-se e faça parte da nossa família
+            </h1>
+            <form onSubmit={handleSignup} className="flex flex-col gap-4 mb-6">
+              <div className="flex flex-col w-full mb-3 items-center">
+                <ProfilePictureSelector
+                  image={profilePic}
+                  setImage={setProfilePic}
+                  onError={onSelectImageError}
+                />
+                <h4 className="mt-3 text-lg text-white">Sua foto de perfil</h4>
+              </div>
 
+              <input
+                type="text"
+                placeholder="Nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="p-2 rounded-md border border-gray-300"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="p-2 rounded-md border border-gray-300"
+              />
+              <input
+                type="tel"
+                placeholder="Telefone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="p-2 rounded-md border border-gray-300"
+              />
+              <input
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="p-2 rounded-md border border-gray-300"
+              />
+              <input
+                type="password"
+                placeholder="Confirmar senha"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="p-2 rounded-md border border-gray-300"
+              />
+              <button
+                type="submit"
+                className="bg-green-600 text-white py-2 text-lg rounded hover:bg-green-700 transition-colors duration-300"
+              >
+                Cadastrar
+              </button>
+            </form>
+            <p className="text-lg text-gray-50 text-center">
+              Já tem uma conta?{" "}
+              <button type="submit" className="text-green-400 underline">
+                Faça Login
+              </button>
+            </p>
+          </div>
+        </div>
+      </Content>
       <Footer />
-    </div>
+    </Container>
   );
 }
 
