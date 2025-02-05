@@ -150,7 +150,7 @@ function Animal() {
                     </p>
                     <p className="mb-2">
                       <b>Idade: </b>
-                      {data.age + (data.age > 1 ? " meses" : "mês")}
+                      {data.age + (data.age > 1 ? " meses" : " mês")}
                     </p>
                     {data.vaccines.length > 0 && (
                       <p className="mb-2">
