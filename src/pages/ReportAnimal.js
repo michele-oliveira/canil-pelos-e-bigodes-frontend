@@ -340,7 +340,7 @@ function Report() {
 
             <div>
               <label htmlFor="age" className="block text-lg mb-2">
-                Idade
+                Idade <span className="text-gray-400 text-sm">(em meses)</span>
               </label>
               <input
                 type="number"
