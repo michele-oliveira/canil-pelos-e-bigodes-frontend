@@ -12,9 +12,11 @@ export const listAnimals = async (page, limit, animalType = null) => {
   try {
     const accessToken = getJwt();
     const response = await fetch(url, {
-      headers: accessToken && {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: accessToken
+        ? {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        : undefined,
     });
     const animals = await response.json();
     if (!response.ok) {
