@@ -272,10 +272,10 @@ function Report() {
     <Container>
       <Header />
       <Content>
-        <div className="max-w-4xl mx-4 lg:mx-auto p-6 bg-gray-800 text-white rounded-lg mt-10">
+        <div className="max-w-4xl mx-4 lg:mx-auto p-6 bg-gray-800 text-white rounded-lg my-10">
           <h1
             className="text-2xl md:text-3xl font-bold mb-6 text-center"
-            style={{ fontFamily: "Montserrat, serif" }}
+            style={{ fontFamily: "Montserrat, sans-serif" }}
           >
             Informe um Animal
           </h1>
