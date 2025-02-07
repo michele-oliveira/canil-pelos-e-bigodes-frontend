@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "../components/react-stacked-toast";
 import Container from "../components/Container";
 import Content from "../components/Content";
@@ -15,7 +15,17 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useAuth();
+
+  const redirectToLogin = () => {
+    const redirectTo = location.state?.from?.pathname;
+    if (redirectTo) {
+      navigate(redirectTo);
+    } else {
+      navigate("/");
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,7 +34,8 @@ function Login() {
       const response = await login(credentials);
       saveJwt(response.accessToken);
       setUser(response.accessToken);
-      navigate("/");
+
+      redirectToLogin();
     } catch (error) {
       if (error instanceof UnauthorizedError) {
         toast({

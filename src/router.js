@@ -1,55 +1,79 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "./pages/App";
 import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useAuth } from "./hooks/useAuth";
+import App from "./pages/App";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Animal from "./pages/Animal";
 import Notices from "./pages/Notices";
+import ProtectedRoute from "./components/ProtectedRoute";
 import ReportAnimal from "./pages/ReportAnimal";
 import AdoptionRequests from "./pages/AdoptionRequests";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/about",
-    element: <About />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/signup",
-    element: <Register />,
-  },
-  {
-    path: "/animal/:animal_id",
-    element: <Animal />,
-  },
-  {
-    path: "/notices",
-    element: <Notices />,
-  },
-  {
-    path: "/report",
-    element: <ReportAnimal />,
-  },
-  {
-    path: "/report/:animal_id",
-    element: <ReportAnimal />,
-  },
-  {
-    path: "/made-adoption-requests",
-    element: <AdoptionRequests type="made" />,
-  },
-  {
-    path: "/received-adoption-requests",
-    element: <AdoptionRequests type="received" />,
-  },
-]);
+const AppRouter = () => {
+  const { user } = useAuth();
 
-export default router;
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <App />,
+    },
+    {
+      path: "/about",
+      element: <About />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/signup",
+      element: <Register />,
+    },
+    {
+      path: "/animal/:animal_id",
+      element: <Animal />,
+    },
+    {
+      path: "/notices",
+      element: <Notices />,
+    },
+    {
+      path: "/report",
+      element: (
+        <ProtectedRoute isAuthenticated={!!user}>
+          <ReportAnimal />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/report/:animal_id",
+      element: (
+        <ProtectedRoute isAuthenticated={!!user}>
+          <ReportAnimal />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/made-adoption-requests",
+      element: (
+        <ProtectedRoute isAuthenticated={!!user}>
+          <AdoptionRequests type="made" />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/received-adoption-requests",
+      element: (
+        <ProtectedRoute isAuthenticated={!!user}>
+          <AdoptionRequests type="received" />
+        </ProtectedRoute>
+      ),
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
+};
+
+export default AppRouter;
