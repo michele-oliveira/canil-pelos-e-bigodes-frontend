@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import {
   IoMdMenu as MenuIcon,
@@ -14,7 +14,24 @@ const Header = () => {
     useState(false);
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { clearUser } = useAuth();
+
+  const scrollToAnimalCards = () => {
+    const element = document.querySelector("#animal-cards");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleClickAdopt = () => {
+    if (pathname === "/") {
+      scrollToAnimalCards();
+    } else {
+      navigate("/");
+      setTimeout(scrollToAnimalCards, 100);
+    }
+  };
 
   const handleLogout = () => {
     clearUser();
@@ -51,12 +68,13 @@ const Header = () => {
           >
             Home
           </Link>
-          <Link
-            to="/login"
+          <button
+            type="button"
+            onClick={handleClickAdopt}
             className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
           >
             Adote um Amigo
-          </Link>
+          </button>
           <Link
             to="/report"
             className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"

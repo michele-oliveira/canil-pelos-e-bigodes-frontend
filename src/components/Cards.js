@@ -102,7 +102,10 @@ const Cards = () => {
   }, [currentPage, animalFilter]);
 
   return (
-    <div className="flex flex-col items-center bg-slate-100 p-4 m-4 rounded-lg">
+    <div
+      id="animal-cards"
+      className="flex flex-col items-center bg-slate-100 p-4 m-4 rounded-lg"
+    >
       <h1 className="text-3xl text-green-700 mb-6 pt-3 text-center font-bold">
         Conheça nossos amigos para adoção
       </h1>
