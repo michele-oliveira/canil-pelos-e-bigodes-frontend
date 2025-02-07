@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Animal from "./pages/Animal";
 import Notices from "./pages/Notices";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import ReportAnimal from "./pages/ReportAnimal";
 import AdoptionRequests from "./pages/AdoptionRequests";
 

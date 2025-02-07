@@ -3,10 +3,10 @@ import ReactDOM from "react-dom/client";
 import { Toaster } from "react-stacked-toast";
 import { AuthProvider } from "./providers/AuthProvider";
 import { AnimalsProvider } from "./providers/AnimalsProvider";
+import AppRouter from "./routes/AppRouter";
 import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
-import AppRouter from "./router";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
