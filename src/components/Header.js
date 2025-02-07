@@ -56,8 +56,9 @@ const Header = () => {
           </Link>
         </div>
         <button
-          className="md:hidden block text-white focus:outline-none"
+          type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden block text-white focus:outline-none"
         >
           <MenuIcon size={28} />
         </button>
@@ -112,6 +113,7 @@ const Header = () => {
             </ul>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="py-2 text-base sm:text-sm md:text-md text-green-400 hover:text-green-500 transition-colors duration-300"
           >
@@ -181,6 +183,7 @@ const Header = () => {
             </ul>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="text-base sm:text-sm text-green-400 hover:text-green-500 transition-colors duration-300"
           >
