@@ -1,15 +1,15 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useAuth } from "./hooks/useAuth";
-import App from "./pages/App";
-import About from "./pages/About";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Animal from "./pages/Animal";
-import Notices from "./pages/Notices";
+import { useAuth } from "../hooks/useAuth";
+import App from "../pages/App";
+import About from "../pages/About";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Animal from "../pages/Animal";
+import Notices from "../pages/Notices";
 import ProtectedRoute from "./ProtectedRoute";
-import ReportAnimal from "./pages/ReportAnimal";
-import AdoptionRequests from "./pages/AdoptionRequests";
+import ReportAnimal from "../pages/ReportAnimal";
+import AdoptionRequests from "../pages/AdoptionRequests";
 
 const AppRouter = () => {
   const { user } = useAuth();
